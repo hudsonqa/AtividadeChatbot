@@ -1,0 +1,787 @@
+{
+  "intents": [
+    {
+      "intent": "cancelar",
+      "examples": [
+        {
+          "text": "cancelar"
+        },
+        {
+          "text": "desejo cancelar"
+        },
+        {
+          "text": "favor cancelar"
+        },
+        {
+          "text": "quero cancelar"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "consulta",
+      "examples": [
+        {
+          "text": "quero consultar"
+        },
+        {
+          "text": "quero verificar o andamento"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "finalizacao",
+      "examples": [
+        {
+          "text": "Adeus"
+        },
+        {
+          "text": "Até Breve"
+        },
+        {
+          "text": "Até Logo"
+        },
+        {
+          "text": "Tchau"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "pedido",
+      "examples": [
+        {
+          "text": "Gostaria de solicitar um serviço"
+        },
+        {
+          "text": "Preciso de um profissional"
+        },
+        {
+          "text": "Preciso de um serviço"
+        },
+        {
+          "text": "Quero contratar um serviço"
+        },
+        {
+          "text": "Quero solicitar um serviço"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "saudacao",
+      "examples": [
+        {
+          "text": "Boa noite"
+        },
+        {
+          "text": "Boa Tarde"
+        },
+        {
+          "text": "Bom dia"
+        },
+        {
+          "text": "Oi"
+        },
+        {
+          "text": "Olá"
+        }
+      ],
+      "description": ""
+    }
+  ],
+  "entities": [
+    {
+      "entity": "contato",
+      "values": [
+        {
+          "type": "patterns",
+          "value": "email",
+          "patterns": [
+            "\\b[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}\\b"
+          ]
+        }
+      ],
+      "fuzzy_match": true
+    },
+    {
+      "entity": "formas_pagamento",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "Cartão de crédito",
+          "synonyms": [
+            "cartão crédito",
+            "cartão de credito",
+            "crédito"
+          ]
+        },
+        {
+          "type": "synonyms",
+          "value": "Cartão de débito",
+          "synonyms": [
+            "cartão débito",
+            "cartão de debito",
+            "débito"
+          ]
+        },
+        {
+          "type": "synonyms",
+          "value": "Dinheiro",
+          "synonyms": [
+            "dinheiro"
+          ]
+        }
+      ],
+      "fuzzy_match": true
+    },
+    {
+      "entity": "servicos",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "Elétrico",
+          "synonyms": [
+            "elétrica",
+            "eletricista",
+            "energia"
+          ]
+        },
+        {
+          "type": "synonyms",
+          "value": "Hidráulico",
+          "synonyms": [
+            "bombeiro hidráulico",
+            "encanador"
+          ]
+        },
+        {
+          "type": "synonyms",
+          "value": "Marcenaria",
+          "synonyms": [
+            "marceneiro"
+          ]
+        }
+      ],
+      "fuzzy_match": true
+    },
+    {
+      "entity": "sys-date",
+      "values": [],
+      "fuzzy_match": true
+    },
+    {
+      "entity": "sys-time",
+      "values": [],
+      "fuzzy_match": true
+    }
+  ],
+  "metadata": {
+    "api_version": {
+      "major_version": "v2",
+      "minor_version": "2018-11-08"
+    }
+  },
+  "webhooks": [
+    {
+      "url": "https://us-central1-atividadechatbot.cloudfunctions.net/solicitar_servico",
+      "name": "main_webhook",
+      "headers": []
+    }
+  ],
+  "dialog_nodes": [
+    {
+      "type": "standard",
+      "title": "Bem-vindo",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Olá. Como posso te ajudar?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "welcome",
+      "dialog_node": "Bem-vindo"
+    },
+    {
+      "type": "standard",
+      "title": "Em outros casos",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Eu não entendi. Você pode tentar reformular a frase."
+              },
+              {
+                "text": "Você pode reformular sua afirmação? Eu não estou entendendo."
+              },
+              {
+                "text": "Eu não entendi o sentido."
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "conditions": "anything_else",
+      "dialog_node": "Em outros casos",
+      "previous_sibling": "node_2_1635104200416",
+      "disambiguation_opt_out": true
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "node_10_1635263947393",
+      "context": {
+        "cancelar": true
+      },
+      "next_step": {
+        "behavior": "skip_all_slots"
+      },
+      "conditions": "#cancelar",
+      "event_name": "generic",
+      "dialog_node": "handler_1_1635284061698"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_1_1635110969910",
+      "context": {
+        "servico": "@servicos"
+      },
+      "conditions": "@servicos",
+      "event_name": "input",
+      "dialog_node": "handler_3_1635110969962"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_6_1635259760208",
+      "context": {
+        "formas_pagamento": "@formas_pagamento"
+      },
+      "conditions": "@formas_pagamento",
+      "event_name": "input",
+      "dialog_node": "handler_3_1635259760209"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_1_1635259806318",
+      "context": {
+        "email": "@contato"
+      },
+      "conditions": "@contato",
+      "event_name": "input",
+      "dialog_node": "handler_3_1635259806323"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Qual o tipo de serviço você está precisando ?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "slot_1_1635110969910",
+      "event_name": "focus",
+      "dialog_node": "handler_4_1635110969962",
+      "previous_sibling": "handler_3_1635110969962"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Qual será a forma de pagamento ?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "slot_6_1635259760208",
+      "event_name": "focus",
+      "dialog_node": "handler_4_1635259760209",
+      "previous_sibling": "handler_3_1635259760209"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Um momento, vou consultar sua solicitação."
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "slot_9_1635264129932",
+      "context": {
+        "email": "<? @contato.literal ?>"
+      },
+      "conditions": "$email",
+      "event_name": "filled",
+      "dialog_node": "handler_4_1635266638383",
+      "previous_sibling": "handler_5_1635264129972"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Por gentileza, informe o seu e-mail"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "slot_9_1635264129932",
+      "event_name": "focus",
+      "dialog_node": "handler_5_1635264129972",
+      "previous_sibling": "handler_7_1635264129972"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": ""
+              }
+            ],
+            "response_type": "text"
+          }
+        ]
+      },
+      "parent": "node_1_1635110925800",
+      "context": {
+        "cancelar": true
+      },
+      "next_step": {
+        "behavior": "skip_all_slots"
+      },
+      "conditions": "#cancelar",
+      "event_name": "generic",
+      "dialog_node": "handler_6_1635284833234"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Qual seu e-mail?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "slot_1_1635259806318",
+      "event_name": "focus",
+      "dialog_node": "handler_7_1635259806323",
+      "previous_sibling": "handler_3_1635259806323"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_9_1635264129932",
+      "context": {
+        "email": "@contato"
+      },
+      "conditions": "@contato",
+      "event_name": "input",
+      "dialog_node": "handler_7_1635264129972"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_1_1635259806318",
+      "context": {
+        "email": "<? @contato.literal ?>"
+      },
+      "conditions": "$email",
+      "event_name": "filled",
+      "dialog_node": "handler_9_1635265317691",
+      "previous_sibling": "handler_7_1635259806323"
+    },
+    {
+      "type": "frame",
+      "title": "consulta",
+      "actions": [
+        {
+          "name": "main_webhook",
+          "type": "webhook",
+          "parameters": {
+            "acao": "consultar",
+            "email": "'$email'"
+          },
+          "result_variable": "webhook_result_2"
+        }
+      ],
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "#consulta",
+      "dialog_node": "node_10_1635263947393",
+      "previous_sibling": "node_1_1635110925800"
+    },
+    {
+      "type": "frame",
+      "actions": [
+        {
+          "name": "main_webhook",
+          "type": "webhook",
+          "parameters": {
+            "acao": "solicitar",
+            "email": "'$email'",
+            "servico": "$servico",
+            "forma_pagamento": "'$formas_pagamento'"
+          },
+          "result_variable": "webhook_result_1"
+        }
+      ],
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "#pedido",
+      "dialog_node": "node_1_1635110925800",
+      "previous_sibling": "node_3_1635102991768"
+    },
+    {
+      "type": "standard",
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "#saudacao",
+      "dialog_node": "node_2_1635104200416",
+      "previous_sibling": "node_10_1635263947393"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Adeus"
+              },
+              {
+                "text": "Até logo!"
+              },
+              {
+                "text": "Até Breve!"
+              },
+              {
+                "text": "Tchau"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "random"
+          }
+        ]
+      },
+      "conditions": "#finalizacao",
+      "dialog_node": "node_3_1635102991768",
+      "previous_sibling": "Bem-vindo"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_1_1635110925800",
+      "context": {
+        "email": null,
+        "sercio": null,
+        "formas_pagamento": null
+      },
+      "conditions": "anything_else",
+      "dialog_node": "response_10_1635261356760",
+      "previous_sibling": "response_6_1635261356024"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "Não encontrei nenhuma solicitação "
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_10_1635263947393",
+      "context": {
+        "email": null
+      },
+      "conditions": "anything_else",
+      "dialog_node": "response_3_1635276635921",
+      "previous_sibling": "response_9_1635276633992"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Você já tem uma solicitação pendente. \nDetalhes da sua solicitação:\nE-mail: <? $webhook_result_1.email ?>\nStatus: <? $webhook_result_1.status?>\nServiço: <? $webhook_result_1.servico?>\nForma de Pagamento: <? $webhook_result_1.forma_pagamento?>\nTicket: <? $webhook_result_1.id?>"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_1_1635110925800",
+      "context": {
+        "email": null,
+        "servico": null,
+        "formas_pagamento": null
+      },
+      "conditions": "$webhook_result_1 && $webhook_result_1.email",
+      "dialog_node": "response_3_1635281143567",
+      "previous_sibling": "response_4_1635284821837"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Ok! Consulta cancelada"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_10_1635263947393",
+      "context": {
+        "email": null,
+        "cancelar": false
+      },
+      "conditions": "$cancelar",
+      "dialog_node": "response_3_1635284187182",
+      "previous_sibling": "handler_1_1635284061698"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Ok! Solicitação cancelada."
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_1_1635110925800",
+      "context": {
+        "email": null,
+        "servico": null,
+        "cancelar": false,
+        "formas_pagamento": null
+      },
+      "conditions": "$cancelar",
+      "dialog_node": "response_4_1635284821837",
+      "previous_sibling": "handler_6_1635284833234"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Boa tarde! Em que posso te ajudar?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_2_1635104200416",
+      "conditions": "now().after('12:00') && now().before('18:00')",
+      "dialog_node": "response_5_1635104367375",
+      "previous_sibling": "response_6_1635104240391"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "Bom dia! Em que posso te ajudar?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_2_1635104200416",
+      "conditions": "now().after('06:00') && now().before('12:00')",
+      "dialog_node": "response_6_1635104240391"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Boa noite! Em que posso te ajudar?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_2_1635104200416",
+      "conditions": "now().after('18:01')",
+      "dialog_node": "response_6_1635104597980",
+      "previous_sibling": "response_5_1635104367375"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "O serviço foi solicitado com sucesso! O número do seu ticket é <? $webhook_result_1.id ?>Em breve um profissional entrara em contato para tratar dos detalhes do serviço.Caso queira consultar o andamento da sua solicitação, entre em contato e informe o seu e-mail."
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_1_1635110925800",
+      "context": {
+        "email": null,
+        "servico": null,
+        "formas_pagamento": null
+      },
+      "conditions": "$webhook_result_1",
+      "dialog_node": "response_6_1635261356024",
+      "previous_sibling": "response_3_1635281143567"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "Detalhes da sua solicitação:\nE-mail: <? $webhook_result_2.email ?>\nStatus: <? $webhook_result_2.status?>\nServiço: <? $webhook_result_2.servico?>\nForma de Pagamento: <? $webhook_result_2.forma_pagamento?>\nTicket: <? $webhook_result_2.id?>"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_10_1635263947393",
+      "context": {
+        "email": null
+      },
+      "conditions": "$webhook_result_2",
+      "dialog_node": "response_9_1635276633992",
+      "previous_sibling": "response_3_1635284187182"
+    },
+    {
+      "type": "slot",
+      "parent": "node_1_1635110925800",
+      "variable": "$servico",
+      "dialog_node": "slot_1_1635110969910",
+      "previous_sibling": "response_10_1635261356760"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_1_1635110925800",
+      "variable": "$email",
+      "dialog_node": "slot_1_1635259806318",
+      "previous_sibling": "slot_1_1635110969910"
+    },
+    {
+      "type": "slot",
+      "parent": "node_1_1635110925800",
+      "variable": "$formas_pagamento",
+      "dialog_node": "slot_6_1635259760208",
+      "previous_sibling": "slot_1_1635259806318"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_10_1635263947393",
+      "variable": "$email",
+      "dialog_node": "slot_9_1635264129932",
+      "previous_sibling": "response_3_1635276635921"
+    }
+  ],
+  "counterexamples": [],
+  "system_settings": {
+    "disambiguation": {
+      "prompt": "Você quis dizer:",
+      "enabled": true,
+      "randomize": true,
+      "max_suggestions": 5,
+      "suggestion_text_policy": "title",
+      "none_of_the_above_prompt": "Nenhuma das anteriores"
+    },
+    "human_agent_assist": {
+      "prompt": "Você quis dizer:"
+    }
+  },
+  "learning_opt_out": false,
+  "name": "Atividade Chatbot",
+  "language": "pt-br",
+  "description": ""
+}
