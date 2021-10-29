@@ -1,7 +1,7 @@
 ### Atividade de Chatbot com Watson Assistant
 
 - Uso do Watson Assistant
-- ChatBot integrago com o Facebook Messenger 
+- ChatBot integrado com o Facebook Messenger 
 - Uso do Firebase Functions como provedor de serviços
 - Uso do Firebase Firestore para armazenanento de dados
 
